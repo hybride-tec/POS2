@@ -1,0 +1,125 @@
+{
+  "1": {
+    "sale_id": 1,
+    "items": [
+      {
+        "product_id": 4,
+        "barcode": "0002221113335",
+        "description": "TAFEL LAGER 750ML",
+        "quantity": 2,
+        "selling_price": 27.95,
+        "line_total": 55.9
+      },
+      {
+        "product_id": 5,
+        "barcode": "222333355554446",
+        "description": "COCA COLA 2L",
+        "quantity": 10,
+        "selling_price": 30.0,
+        "line_total": 300.0
+      },
+      {
+        "product_id": 6,
+        "barcode": "44442555666621",
+        "description": "WINDHOEK DRAUGHT 750ML",
+        "quantity": 60,
+        "selling_price": 30.0,
+        "line_total": 1800.0
+      }
+    ],
+    "total_amount": 2155.9,
+    "timestamp": "2026-09-12T07:35:58"
+  },
+  "2": {
+    "sale_id": 2,
+    "items": [
+      {
+        "product_id": 5,
+        "barcode": "222333355554446",
+        "description": "COCA COLA 2L",
+        "quantity": 100,
+        "selling_price": 30.0,
+        "line_total": 3000.0
+      }
+    ],
+    "total_amount": 3000.0,
+    "timestamp": "2026-09-12T08:44:24"
+  },
+  "3": {
+    "sale_id": 3,
+    "items": [
+      {
+        "product_id": 1,
+        "barcode": "600100000001",
+        "description": "BROWN BREAD",
+        "quantity": 3,
+        "selling_price": 10.95,
+        "line_total": 32.849999999999994
+      },
+      {
+        "product_id": 4,
+        "barcode": "0002221113335",
+        "description": "TAFEL LAGER 750ML",
+        "quantity": 80,
+        "selling_price": 27.95,
+        "line_total": 2236.0
+      },
+      {
+        "product_id": 5,
+        "barcode": "222333355554446",
+        "description": "COCA COLA 2L",
+        "quantity": 50,
+        "selling_price": 30.0,
+        "line_total": 1500.0
+      }
+    ],
+    "total_amount": 3768.85,
+    "timestamp": "2026-09-12T10:22:06"
+  },
+  "4": {
+    "sale_id": 4,
+    "items": [
+      {
+        "product_id": 6,
+        "barcode": "44442555666621",
+        "description": "WINDHOEK DRAUGHT 750ML",
+        "quantity": 20,
+        "selling_price": 30.0,
+        "line_total": 600.0
+      },
+      {
+        "product_id": 5,
+        "barcode": "222333355554446",
+        "description": "COCA COLA 2L",
+        "quantity": 20,
+        "selling_price": 30.0,
+        "line_total": 600.0
+      },
+      {
+        "product_id": 4,
+        "barcode": "0002221113335",
+        "description": "TAFEL LAGER 750ML",
+        "quantity": 20,
+        "selling_price": 27.95,
+        "line_total": 559.0
+      }
+    ],
+    "total_amount": 1759.0,
+    "timestamp": "2026-09-12T10:43:53"
+  },
+  "5": {
+    "sale_id": 5,
+    "items": [
+      {
+        "product_id": 6,
+        "barcode": "44442555666621",
+        "description": "WINDHOEK DRAUGHT 750ML",
+        "quantity": 20,
+        "selling_price": 30.0,
+        "line_total": 600.0
+      }
+    ],
+    "total_amount": 600.0,
+    "timestamp": "2026-09-14T15:56:44"
+  }
+}
