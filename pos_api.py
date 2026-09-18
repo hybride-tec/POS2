@@ -10,6 +10,9 @@ from flask import Flask, jsonify, request
 import pos_logic
 
 app = Flask(__name__)
+@app.get("/health")
+def health():
+    return {"status": "ok"}, 200
 
 
 # ------------------------------------------------------------
