@@ -1,3 +1,5 @@
+
+
 # pos_logic.py
 # ------------------------------------------------------------
 # Core POS logic.
@@ -18,6 +20,9 @@ import csv
 import json
 import os
 import datetime
+from dotenv import load_dotenv
+load_dotenv()
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # ------------------------------------------------------------
 # DATA FILE LOCATIONS
@@ -37,21 +42,22 @@ PRODUCT_FIELDS = [
     "stock_qty",
 ]
 
+USERS = {
+       "admin": {
+           "password_hash": generate_password_hash(os.environ.get("ADMIN_PASSWORD", "changeme")),
+           "role": "admin",
+       },
+       "cashier1": {
+           "password_hash": generate_password_hash(os.environ.get("CASHIER1_PASSWORD", "changeme")),
+           "role": "cashier",
+       },
+   }
 
 # ------------------------------------------------------------
 # TEMPORARY USER DATA
 # ------------------------------------------------------------
 
-USERS = {
-    "admin": {
-        "password": "admin123",
-        "role": "admin",
-    },
-    "cashier1": {
-        "password": "cash123",
-        "role": "cashier",
-    },
-}
+
 
 
 # ------------------------------------------------------------
@@ -70,7 +76,7 @@ def login(username: str, password: str) -> str | None:
     user = USERS.get(username)
     if user is None:
         return None
-    if user["password"] == password:
+    if check_password_hash(user["password_hash"], password):
         return user["role"]
     return None
 

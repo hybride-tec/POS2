@@ -543,6 +543,15 @@ def open_receive_stock_window():
 def open_cashier_window():
     """Open the cashier sales window with editable cart and payment popup."""
     win = tk.Toplevel()
+
+    def on_cashier_close():
+        win.destroy()
+        try:
+            win.master.deiconify()
+        except Exception:
+            pass
+
+    win.protocol("WM_DELETE_WINDOW", on_cashier_close)
     win.title("Cashier")
     win.geometry("1000x700")
 
@@ -1573,7 +1582,7 @@ def open_view_sales_window():
     load_sales()
 
 def open_manager_auth_window():
-    #""""""""""""""""""""""""""Open the manager password prompt.""""""""""""""""""""""""""""""""""""""
+    #""Open the manager password prompt.""
     dlg = tk.Toplevel()
     dlg.title("Manager Login")
     dlg.geometry("380x230")
@@ -1622,14 +1631,18 @@ def open_manager_auth_window():
     def check_password():
         password = password_var.get().strip()
 
-        if password == "manager123":
-            dlg.grab_release()
-            dlg.destroy()
-            open_dashboard_window()
-        else:
-            message_var.set("Incorrect manager password.")
-            password_entry.focus_set()
-            password_entry.select_range(0, tk.END)
+        try:
+            resp = requests.post(f"{SERVER_URL}/login", json={"username": "admin", "password": password}, timeout=5)
+            if resp.status_code == 200 and resp.json().get("role") == "admin":
+                dlg.grab_release()
+                dlg.destroy()
+                open_dashboard_window()
+            else:
+                message_var.set("Incorrect manager password.")
+                password_entry.focus_set()
+                password_entry.select_range(0, tk.END)
+    except requests.exceptions.RequestException:
+        message_var.set("Could not reach server. Check connection.")
 
     tk.Button(
         button_frame,
@@ -2142,24 +2155,27 @@ def main():
    
 
     def do_login():
-        username = username_var.get().strip()
-        password = password_var.get()
-        try:
-            resp = requests.post(f"{SERVER_URL}/login", json={"username": username, "password": password}, timeout=5)
-            resp.raise_for_status()
-            data = resp.json()
-            if "role" in data:
-                role = data["role"]
-                if role == "admin":
-                    login_frame.pack_forget()
-                    admin_frame.pack(fill="both", expand=True)
-                    result_var.set(f"Logged in as: {role}")
-                else:
-                    result_var.set(f"Logged in as: {role} (no menu yet)")
+    username = username_var.get().strip()
+    password = password_var.get()
+    try:
+        resp = requests.post(f"{SERVER_URL}/login", json={"username": username, "password": password}, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        if "role" in data:
+            role = data["role"]
+            if role == "admin":
+                login_frame.pack_forget()
+                admin_frame.pack(fill="both", expand=True)
+                result_var.set(f"Logged in as: {role}")
+            elif role == "cashier":
+                root.withdraw()
+                open_cashier_window()
             else:
-                result_var.set("Login failed")
-        except Exception as e:
-            result_var.set(f"Error: {e}")
+                result_var.set(f"Logged in as: {role} (no menu yet)")
+        else:
+            result_var.set("Login failed")
+    except Exception as e:
+        result_var.set(f"Error: {e}")
 
     tk.Button(login_frame, text="Login", width=20, height=2, font=("Arial", 12), command=do_login).pack(pady=10)
     tk.Button(login_frame, text="Exit", width=20, height=2, font=("Arial", 12), command=root.destroy).pack(pady=5)

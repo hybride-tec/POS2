@@ -1,12 +1,18 @@
 # Python
 __pycache__/
 *.py[cod]
+
+# Environment files
 .env
+
+# Virtual environments
 venv/
 .venv/
+
+# Logs
 *.log
 
-# IDE / editors
+# Editors
 .idea/
 .vscode/
 *.swp
@@ -15,3 +21,26 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Editor backup files
+*.save
+*.save.*
+*~
+
+# SSH keys and certificates
+*.pem
+*.key
+id_ed25519
+id_ed25519.pub
+github_pos
+github_pos.pub
+
+# Local databases and private data
+*.db
+sales.json
+data/pos_data.json
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
