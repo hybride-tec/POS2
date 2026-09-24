@@ -7,7 +7,7 @@ import datetime
 import csv
 import os
 
-SERVER_URL = "http://192.168.149.130:5000"
+from config import SERVER_URL
 
 # Global dashboard variables (used by open_dashboard_window and load_dashboard)
 today_date_var = None
@@ -1641,8 +1641,8 @@ def open_manager_auth_window():
                 message_var.set("Incorrect manager password.")
                 password_entry.focus_set()
                 password_entry.select_range(0, tk.END)
-    except requests.exceptions.RequestException:
-        message_var.set("Could not reach server. Check connection.")
+        except requests.exceptions.RequestException:
+            message_var.set("Could not reach server. Check connection.")
 
     tk.Button(
         button_frame,
@@ -2155,27 +2155,27 @@ def main():
    
 
     def do_login():
-    username = username_var.get().strip()
-    password = password_var.get()
-    try:
-        resp = requests.post(f"{SERVER_URL}/login", json={"username": username, "password": password}, timeout=5)
-        resp.raise_for_status()
-        data = resp.json()
-        if "role" in data:
-            role = data["role"]
-            if role == "admin":
-                login_frame.pack_forget()
-                admin_frame.pack(fill="both", expand=True)
-                result_var.set(f"Logged in as: {role}")
-            elif role == "cashier":
-                root.withdraw()
-                open_cashier_window()
+        username = username_var.get().strip()
+        password = password_var.get()
+        try:
+            resp = requests.post(f"{SERVER_URL}/login", json={"username": username, "password": password}, timeout=5)
+            resp.raise_for_status()
+            data = resp.json()
+            if "role" in data:
+                role = data["role"]
+                if role == "admin":
+                    login_frame.pack_forget()
+                    admin_frame.pack(fill="both", expand=True)
+                    result_var.set(f"Logged in as: {role}")
+                elif role == "cashier":
+                    root.withdraw()
+                    open_cashier_window()
+                else:
+                    result_var.set(f"Logged in as: {role} (no menu yet)")
             else:
-                result_var.set(f"Logged in as: {role} (no menu yet)")
-        else:
-            result_var.set("Login failed")
-    except Exception as e:
-        result_var.set(f"Error: {e}")
+                result_var.set("Login failed")
+        except Exception as e:
+            result_var.set(f"Error: {e}")
 
     tk.Button(login_frame, text="Login", width=20, height=2, font=("Arial", 12), command=do_login).pack(pady=10)
     tk.Button(login_frame, text="Exit", width=20, height=2, font=("Arial", 12), command=root.destroy).pack(pady=5)
