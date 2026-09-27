@@ -9,9 +9,16 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 *(Add screenshots or a short demo GIF here — e.g. the login screen, cashier checkout, and manager dashboard.)*
 
 ```
-[ login screen screenshot ]
-[ cashier checkout screenshot ]
-[ manager dashboard screenshot ]
+![Login screen/Lending screen..](C:\pos-client-git\Imgs\LENDING SCREEN.png)
+![Main Menu....................](C:\pos-client-git\Imgs\MAIN MENU.png)
+![Cashier window...............](C:\pos-client-git\Imgs\CASHIER WINDOW.png)
+![Cashier checkout.............](C:\pos-client-git\Imgs\CHECK OUT.png)
+![View current stock...........](C:\pos-client-git\Imgs\CURRENT STOCK.png)
+![Receive stock................](C:\pos-client-git\Imgs\RECEIVE STOCK.png)
+![Add new product..............](C:\pos-client-git\Imgs\ADD NEW PRODUCT.png)
+![Manager dashboard............](C:\pos-client-git\Imgs\MANAGER DASHBOARD.png)
+![Login screen / Lending screen](C:\pos-client-git\Imgs\LENDING SCREEN.png)
+
 ```
 
 ## Features
