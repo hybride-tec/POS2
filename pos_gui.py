@@ -15,13 +15,14 @@ from manager import open_manager_auth_window
 
 def main():
     root = tk.Tk()
-    root.title("POS - Login")
+    root.title("HYBRIDE-TEC")
     root.geometry("800x600")
 
     login_frame = tk.Frame(root)
     login_frame.pack(fill="both", expand=True)
 
-    tk.Label(login_frame, text="POS Login", font=("Arial", 16, "bold")).pack(pady=15)
+    tk.Label(login_frame, text="HYBRIDE-TEC
+", font=("Arial", 16, "bold")).pack(pady=15)
 
     tk.Label(login_frame, text="Username:", font=("Arial", 12)).pack()
     username_var = tk.StringVar()

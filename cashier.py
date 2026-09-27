@@ -528,7 +528,7 @@ def open_cashier_window():
 
         tk.Label(
             main_frame,
-            text="AAABB STORE",
+            text="ED SUPERMARKET",
             font=("Arial", 14, "bold"),
         ).pack(pady=5)
 
