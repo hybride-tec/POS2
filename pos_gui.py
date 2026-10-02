@@ -19,15 +19,15 @@ def main():
     root.geometry("800x600")
 
     login_frame = tk.Frame(root)
-    login_frame.pack(fill="both", expand=True)
+    login_frame.pack(fill="both", expand="True")
 
     tk.Label(login_frame, text="ED SUPERMARKET", font=("Arial", 16, "bold")).pack(pady=15)
 
-    tk.Label(login_frame, text="Username:", font=("Arial", 12)).pack()
+    tk.Label(login_frame, text="USERNAME", font=("Arial", 10)).pack()
     username_var = tk.StringVar()
     tk.Entry(login_frame, textvariable=username_var, width=30, font=("Arial", 12)).pack(pady=5)
 
-    tk.Label(login_frame, text="Password:", font=("Arial", 12)).pack()
+    tk.Label(login_frame, text="PASSWORD", font=("Arial", 10)).pack()
     password_var = tk.StringVar()
     tk.Entry(login_frame, textvariable=password_var, width=30, font=("Arial", 12), show="*").pack(pady=5)
 
@@ -35,7 +35,7 @@ def main():
     tk.Label(login_frame, textvariable=result_var, font=("Arial", 11)).pack(pady=10)
 
     admin_frame = tk.Frame(root)
-    tk.Label(admin_frame, text="Admin Menu", font=("Arial", 16, "bold")).pack(pady=15)
+    tk.Label(admin_frame, text="MENU", font=("Arial", 18, "bold")).pack(pady=15)
 
     def placeholder_action(action_name):
         messagebox.showinfo("Admin Action", f"{action_name}\n(Not implemented yet)")
