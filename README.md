@@ -6,7 +6,6 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 
 ## Screenshots
 
-```
 ![Login screen/Lending screen..](Imgs/LENDING%20SCREEN.png)
 ![Main Menu....................](Imgs/MAIN%20MENU.png)
 ![Cashier window...............](Imgs/CASHIER%20WINDOW.png)
@@ -16,7 +15,6 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 ![Add new product..............](Imgs/ADD%20NEW%20PRODUCT.png)
 ![Manager dashboard............](Imgs/MANAGER%20DASHBOARD.png)
 
-```
 
 ## Features
 
