@@ -6,18 +6,15 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 
 ## Screenshots
 
-*(Add screenshots or a short demo GIF here — e.g. the login screen, cashier checkout, and manager dashboard.)*
-
 ```
-![Login screen/Lending screen..](C:\pos-client-git\Imgs\LENDING SCREEN.png)
-![Main Menu....................](C:\pos-client-git\Imgs\MAIN MENU.png)
-![Cashier window...............](C:\pos-client-git\Imgs\CASHIER WINDOW.png)
-![Cashier checkout.............](C:\pos-client-git\Imgs\CHECK OUT.png)
-![View current stock...........](C:\pos-client-git\Imgs\CURRENT STOCK.png)
-![Receive stock................](C:\pos-client-git\Imgs\RECEIVE STOCK.png)
-![Add new product..............](C:\pos-client-git\Imgs\ADD NEW PRODUCT.png)
-![Manager dashboard............](C:\pos-client-git\Imgs\MANAGER DASHBOARD.png)
-![Login screen / Lending screen](C:\pos-client-git\Imgs\LENDING SCREEN.png)
+![Login screen/Lending screen..](Imgs/LENDING%20SCREEN.png)
+![Main Menu....................](Imgs/MAIN%20MENU.png)
+![Cashier window...............](Imgs/CASHIER%20WINDOW.png)
+![Cashier checkout.............](Imgs/CHECK%20OUT.png)
+![View current stock...........](Imgs/CURRENT%20STOCK.png)
+![Receive stock................](Imgs/RECEIVE%20STOCK.png)
+![Add new product..............](Imgs/ADD%20NEW%20PRODUCT.png)
+![Manager dashboard............](Imgs/MANAGER%20DASHBOARD.png)
 
 ```
 
