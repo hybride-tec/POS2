@@ -1,4 +1,5 @@
 # cashier.py
+
 """Cashier checkout window: search/select products, build a cart, take payment, print receipt."""
 
 import tkinter as tk
@@ -13,11 +14,13 @@ def open_cashier_window():
     win = tk.Toplevel()
 
     def on_cashier_close():
-        win.destroy()
-        try:
-            win.master.deiconify()
-        except Exception:
-            pass
+
+        if messagebox.askokcancel("Quit", "Are you sure you want to close this window?"):
+            win.destroy()
+            try:
+                win.master.deiconify()
+            except Exception:
+                pass
 
     win.protocol("WM_DELETE_WINDOW", on_cashier_close)
     win.title("Cashier")
