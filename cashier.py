@@ -488,7 +488,7 @@ def open_cashier_window():
                     warning_var.set("Enter a valid amount.")
                     return
 
-             if amount_tendered < total:
+            if amount_tendered < total:
                 pwd = admin_pwd_var.get()
                 try:
                     resp = requests.post(f"{SERVER_URL}/login", json={"username": "admin", "password": pwd}, timeout=5)
