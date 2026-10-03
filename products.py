@@ -267,8 +267,13 @@ def open_edit_products_window():
         pwd = simpledialog.askstring("Admin password", "Enter admin password to confirm deletion:", show="*", parent=win)
         if pwd is None:
             return
-        if pwd != "admin123":
-            result_var.set("Wrong admin password.")
+        try:
+            resp = requests.post(f"{SERVER_URL}/login", json={"username": "admin", "password": pwd}, timeout=5)
+            if resp.status_code != 200 or resp.json().get("role") != "admin":
+                result_var.set("Wrong admin password.")
+                return
+        except requests.exceptions.RequestException:
+            result_var.set("Could not reach server to verify password.")
             return
         try:
             pid = int(pid_text)

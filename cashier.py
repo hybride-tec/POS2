@@ -491,14 +491,19 @@ def open_cashier_window():
                     warning_var.set("Enter a valid amount.")
                     return
 
-                if amount_tendered < total:
-                    pwd = admin_pwd_var.get()
-                    if pwd != "admin123":
+            if amount_tendered < total:
+                pwd = admin_pwd_var.get()
+                try:
+                    resp = requests.post(f"{SERVER_URL}/login", json={"username": "admin", "password": pwd}, timeout=5)
+                    if resp.status_code != 200 or resp.json().get("role") != "admin":
                         warning_var.set("Admin password incorrect.")
                         return
-                    # Admin approved short payment
-                    complete_sale(override_admin_ok=True)
+                except requests.exceptions.RequestException:
+                    warning_var.set("Could not reach server to verify password.")
                     return
+                # Admin approved short payment
+                complete_sale(override_admin_ok=True)
+                return
 
             # Normal path: amount >= total or card
             complete_sale(override_admin_ok=False)
