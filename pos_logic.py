@@ -175,6 +175,8 @@ def update_product(
 
 
 def delete_product(product_id: int):
+    import psycopg2.errors
+
     if product_id is None:
         raise ValueError("product_id is required.")
 
@@ -185,8 +187,16 @@ def delete_product(product_id: int):
         if cur.fetchone() is None:
             raise ValueError(f"Product with id {product_id} not found.")
 
-        cur.execute("DELETE FROM products WHERE product_id = %s", (product_id,))
-        conn.commit()
+        try:
+            cur.execute("DELETE FROM products WHERE product_id = %s", (product_id,))
+            conn.commit()
+        except psycopg2.errors.ForeignKeyViolation:
+            conn.rollback()
+            raise ValueError(
+                "This product can't be deleted because it has recorded sales history. "
+                "Consider marking it inactive instead of deleting it."
+            )
+
         return {"status": "ok", "deleted_id": product_id}
     finally:
         conn.close()
