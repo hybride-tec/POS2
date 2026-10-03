@@ -33,7 +33,7 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 |---|---|
 | Desktop client | Python, Tkinter |
 | Backend API | Python, Flask |
-| Data storage | CSV (products) and JSON (sales) |
+| Data storage | PostgreSQL |
 | Authentication | `werkzeug.security` password hashing |
 | Hosting | Self-hosted on Ubuntu Server (VMware VM) |
 | Version control | Git / GitHub |
@@ -110,11 +110,24 @@ ADMIN_PASSWORD=choose_a_strong_password
 CASHIER1_PASSWORD=choose_a_strong_password
 ```
 
-### 4. Start the Flask server
+### 4. Set up the database
+Install PostgreSQL, then create the database and a user:
 ```bash
-python3 server_api.py
+sudo apt install -y postgresql postgresql-contrib
+sudo -u postgres psql
 ```
-The API will run on `http://0.0.0.0:5000` by default.
+Inside psql:
+```sql
+CREATE DATABASE pos_db;
+CREATE USER pos_user WITH PASSWORD 'choose_a_password';
+GRANT ALL PRIVILEGES ON DATABASE pos_db TO pos_user;
+\c pos_db
+GRANT ALL ON SCHEMA public TO pos_user;
+\q
+```
+Add the matching `DB_*` values to your `.env`, then run the setup script once to create the tables and migrate any existing data:
+```bash
+python3 init_db.py
 
 ### 5. Run the desktop client
 On the same machine or a different one on the network:
