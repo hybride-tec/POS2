@@ -175,7 +175,6 @@ def update_product(
 
 
 def delete_product(product_id: int):
-   def delete_product(product_id: int):
     import psycopg2.errors
 
     if product_id is None:
