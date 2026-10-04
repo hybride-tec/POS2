@@ -3,7 +3,8 @@
 """Cashier checkout window: search/select products, build a cart, take payment, print receipt."""
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+
 import requests
 
 from config import SERVER_URL
