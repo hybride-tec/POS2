@@ -4,7 +4,6 @@
 
 import tkinter as tk
 from tkinter import ttk, messagebox
-
 import requests
 
 from config import SERVER_URL
