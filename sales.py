@@ -8,6 +8,7 @@ import datetime
 import csv
 
 from config import SERVER_URL
+from auth_state import get_headers
 
 
 def open_view_sales_window():
@@ -16,7 +17,6 @@ def open_view_sales_window():
     win.title("View Sales")
     win.geometry("1000x700")
 
-    # ---------- Filters ----------
     filter_frame = tk.Frame(win)
     filter_frame.pack(fill="x", padx=10, pady=8)
 
@@ -36,23 +36,15 @@ def open_view_sales_window():
 
     result_var = tk.StringVar()
 
-    tk.Label(
-        filter_frame,
-        textvariable=result_var,
-        fg="blue",
-    ).grid(row=0, column=4, sticky="w", padx=20, pady=5)
+    tk.Label(filter_frame, textvariable=result_var, fg="blue").grid(
+        row=0, column=4, sticky="w", padx=20, pady=5
+    )
 
-    # ---------- Sales list ----------
     sales_frame = tk.LabelFrame(win, text="Sales", padx=5, pady=5)
     sales_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
     sales_columns = ("sale_id", "timestamp", "total_amount", "items_count")
-    sales_tree = ttk.Treeview(
-        sales_frame,
-        columns=sales_columns,
-        show="headings",
-        height=10,
-    )
+    sales_tree = ttk.Treeview(sales_frame, columns=sales_columns, show="headings", height=10)
 
     sales_tree.heading("sale_id", text="Sale ID")
     sales_tree.heading("timestamp", text="Timestamp")
@@ -66,17 +58,11 @@ def open_view_sales_window():
 
     sales_tree.pack(fill="both", expand=True)
 
-    # ---------- Sale details ----------
     details_frame = tk.LabelFrame(win, text="Sale Details", padx=5, pady=5)
     details_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
     details_columns = ("description", "quantity", "selling_price", "line_total")
-    details_tree = ttk.Treeview(
-        details_frame,
-        columns=details_columns,
-        show="headings",
-        height=6,
-    )
+    details_tree = ttk.Treeview(details_frame, columns=details_columns, show="headings", height=6)
 
     details_tree.heading("description", text="Product")
     details_tree.heading("quantity", text="Qty")
@@ -95,17 +81,12 @@ def open_view_sales_window():
     details_info_frame = tk.Frame(details_frame)
     details_info_frame.pack(fill="x", pady=5)
 
-    tk.Label(
-        details_info_frame,
-        textvariable=details_info_var,
-        fg="blue",
-    ).pack(side="left", padx=5)
+    tk.Label(details_info_frame, textvariable=details_info_var, fg="blue").pack(side="left", padx=5)
 
-    all_sales_cache = []  # full list from server
-    filtered_sales_cache = []  # after date filter
+    all_sales_cache = []
+    filtered_sales_cache = []
 
     def parse_date(date_text: str):
-        """Parse YYYY-MM-DD to a date object, or return None if invalid."""
         if not date_text.strip():
             return None
         try:
@@ -114,7 +95,6 @@ def open_view_sales_window():
             return None
 
     def load_sales():
-        """Load all sales from the server."""
         nonlocal all_sales_cache, filtered_sales_cache
 
         for row in sales_tree.get_children():
@@ -126,10 +106,7 @@ def open_view_sales_window():
         result_var.set("")
 
         try:
-            response = requests.get(
-                f"{SERVER_URL}/sales",
-                timeout=6,
-            )
+            response = requests.get(f"{SERVER_URL}/sales", headers=get_headers(), timeout=6)
             response.raise_for_status()
             sales_list = response.json()
 
@@ -140,7 +117,6 @@ def open_view_sales_window():
             result_var.set(f"Could not load sales: {error}")
 
     def apply_date_filter():
-        """Filter sales by date range and refresh the sales table."""
         from_date = parse_date(from_date_var.get())
         to_date = parse_date(to_date_var.get())
 
@@ -163,7 +139,8 @@ def open_view_sales_window():
 
             filtered.append(sale)
 
-        filtered_sales_cache = filtered
+        filtered_sales_cache.clear()
+        filtered_sales_cache.extend(filtered)
 
         for row in sales_tree.get_children():
             sales_tree.delete(row)
@@ -175,25 +152,12 @@ def open_view_sales_window():
             items = sale.get("items", [])
             items_count = len(items)
 
-            sales_tree.insert(
-                "",
-                "end",
-                values=(
-                    sale_id,
-                    timestamp,
-                    f"{total_amount:.2f}",
-                    items_count,
-                ),
-            )
+            sales_tree.insert("", "end", values=(sale_id, timestamp, f"{total_amount:.2f}", items_count))
 
-        result_var.set(
-            f"Showing {len(filtered_sales_cache)} of {len(all_sales_cache)} sales."
-        )
+        result_var.set(f"Showing {len(filtered_sales_cache)} of {len(all_sales_cache)} sales.")
 
     def on_select_sale(event):
-        """When a sale is selected, show its details with product names."""
         selection = sales_tree.selection()
-
         if not selection:
             return
 
@@ -203,9 +167,7 @@ def open_view_sales_window():
         for row in details_tree.get_children():
             details_tree.delete(row)
 
-        sale = next(
-            (s for s in filtered_sales_cache if s.get("sale_id") == sale_id), None
-        )
+        sale = next((s for s in filtered_sales_cache if s.get("sale_id") == sale_id), None)
         if sale is None:
             sale = next((s for s in all_sales_cache if s.get("sale_id") == sale_id), None)
 
@@ -217,24 +179,17 @@ def open_view_sales_window():
         total_amount = sale.get("total_amount", 0)
         timestamp = sale.get("timestamp", "")
 
-        details_info_var.set(
-            f"Sale ID: {sale_id} | Time: {timestamp} | Total: {total_amount:.2f}"
-        )
+        details_info_var.set(f"Sale ID: {sale_id} | Time: {timestamp} | Total: {total_amount:.2f}")
 
         for item in items:
-            details_tree.insert(
-                "",
-                "end",
-                values=(
-                    item.get("description", ""),
-                    item.get("quantity", 0),
-                    f"{item.get('selling_price', 0):.2f}",
-                    f"{item.get('line_total', 0):.2f}",
-                ),
-            )
+            details_tree.insert("", "end", values=(
+                item.get("description", ""),
+                item.get("quantity", 0),
+                f"{item.get('selling_price', 0):.2f}",
+                f"{item.get('line_total', 0):.2f}",
+            ))
 
     def export_sales_to_csv():
-        """Export currently filtered sales (with line items) to CSV."""
         if not filtered_sales_cache:
             result_var.set("No sales to export. Adjust filters or load sales.")
             return
@@ -252,13 +207,8 @@ def open_view_sales_window():
         try:
             with open(file_path, "w", newline="", encoding="utf-8") as f:
                 fieldnames = [
-                    "sale_id",
-                    "timestamp",
-                    "product_description",
-                    "quantity",
-                    "selling_price",
-                    "line_total",
-                    "total_amount",
+                    "sale_id", "timestamp", "product_description",
+                    "quantity", "selling_price", "line_total", "total_amount",
                 ]
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
@@ -271,13 +221,9 @@ def open_view_sales_window():
                     items = sale.get("items", [])
                     if not items:
                         writer.writerow({
-                            "sale_id": sale_id,
-                            "timestamp": timestamp,
-                            "product_description": "",
-                            "quantity": 0,
-                            "selling_price": 0,
-                            "line_total": 0,
-                            "total_amount": total_amount,
+                            "sale_id": sale_id, "timestamp": timestamp,
+                            "product_description": "", "quantity": 0,
+                            "selling_price": 0, "line_total": 0, "total_amount": total_amount,
                         })
                     else:
                         for item in items:
@@ -296,36 +242,12 @@ def open_view_sales_window():
         except Exception as error:
             result_var.set(f"Export failed: {error}")
 
-    # ---------- Buttons ----------
     btn_frame = tk.Frame(win)
     btn_frame.pack(fill="x", padx=10, pady=8)
 
-    tk.Button(
-        btn_frame,
-        text="Apply Filter",
-        command=apply_date_filter,
-        width=14,
-        height=2,
-        font=("Arial", 11),
-    ).pack(side="left", padx=5)
-
-    tk.Button(
-        btn_frame,
-        text="Refresh",
-        command=load_sales,
-        width=12,
-        height=2,
-        font=("Arial", 11),
-    ).pack(side="left", padx=5)
-
-    tk.Button(
-        btn_frame,
-        text="Export to CSV",
-        command=export_sales_to_csv,
-        width=14,
-        height=2,
-        font=("Arial", 11),
-    ).pack(side="left", padx=5)
+    tk.Button(btn_frame, text="Apply Filter", command=apply_date_filter, width=14, height=2, font=("Arial", 11)).pack(side="left", padx=5)
+    tk.Button(btn_frame, text="Refresh", command=load_sales, width=12, height=2, font=("Arial", 11)).pack(side="left", padx=5)
+    tk.Button(btn_frame, text="Export to CSV", command=export_sales_to_csv, width=14, height=2, font=("Arial", 11)).pack(side="left", padx=5)
 
     from_date_entry.bind("<Return>", lambda e: apply_date_filter())
     to_date_entry.bind("<Return>", lambda e: apply_date_filter())

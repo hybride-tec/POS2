@@ -6,6 +6,7 @@ from tkinter import messagebox
 import requests
 
 from config import SERVER_URL
+from auth_state import set_token
 from products import open_add_products_window, open_view_stock_window, open_edit_products_window
 from stock import open_receive_stock_window
 from cashier import open_cashier_window
@@ -19,15 +20,15 @@ def main():
     root.geometry("800x600")
 
     login_frame = tk.Frame(root)
-    login_frame.pack(fill="both", expand="True")
+    login_frame.pack(fill="both", expand=True)
 
     tk.Label(login_frame, text="ED SUPERMARKET", font=("Arial", 16, "bold")).pack(pady=15)
 
-    tk.Label(login_frame, text="USERNAME", font=("Arial", 10)).pack()
+    tk.Label(login_frame, text="Username:", font=("Arial", 12)).pack()
     username_var = tk.StringVar()
     tk.Entry(login_frame, textvariable=username_var, width=30, font=("Arial", 12)).pack(pady=5)
 
-    tk.Label(login_frame, text="PASSWORD", font=("Arial", 10)).pack()
+    tk.Label(login_frame, text="Password:", font=("Arial", 12)).pack()
     password_var = tk.StringVar()
     tk.Entry(login_frame, textvariable=password_var, width=30, font=("Arial", 12), show="*").pack(pady=5)
 
@@ -35,7 +36,7 @@ def main():
     tk.Label(login_frame, textvariable=result_var, font=("Arial", 11)).pack(pady=10)
 
     admin_frame = tk.Frame(root)
-    tk.Label(admin_frame, text="MENU", font=("Arial", 18, "bold")).pack(pady=15)
+    tk.Label(admin_frame, text="Admin Menu", font=("Arial", 16, "bold")).pack(pady=15)
 
     def placeholder_action(action_name):
         messagebox.showinfo("Admin Action", f"{action_name}\n(Not implemented yet)")
@@ -79,6 +80,7 @@ def main():
             data = resp.json()
             if "role" in data:
                 role = data["role"]
+                set_token(data.get("token"))  # store the token so later requests are authorized
                 if role == "admin":
                     login_frame.pack_forget()
                     admin_frame.pack(fill="both", expand=True)
@@ -97,20 +99,11 @@ def main():
     tk.Button(login_frame, text="Exit", width=20, height=2, font=("Arial", 12), command=root.destroy).pack(pady=5)
 
     manager_button_frame = tk.Frame(root)
-    manager_button_frame.pack(
-        side="bottom",
-        fill="x",
-        padx=10,
-        pady=12,
-    )
+    manager_button_frame.pack(side="bottom", fill="x", padx=10, pady=12)
 
     tk.Button(
-        manager_button_frame,
-        text="Manager Dashboard",
-        width=25,
-        height=2,
-        font=("Arial", 12, "bold"),
-        command=open_manager_auth_window,
+        manager_button_frame, text="Manager Dashboard", width=25, height=2,
+        font=("Arial", 12, "bold"), command=open_manager_auth_window,
     ).pack()
 
     root.mainloop()

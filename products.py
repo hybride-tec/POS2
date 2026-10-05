@@ -6,6 +6,7 @@ from tkinter import messagebox, ttk, simpledialog
 import requests
 
 from config import SERVER_URL
+from auth_state import get_headers
 
 
 def open_add_products_window():
@@ -50,13 +51,13 @@ def open_add_products_window():
                     "cost_price": cost_price,
                     "stock_qty": int(stock_qty_var.get()),
                 },
+                headers=get_headers(),
                 timeout=5,
             )
-            resp.raise_for_status()
             data = resp.json()
 
-            if "error" in data:
-                result_var.set(f"Error: {data['error']}")
+            if resp.status_code >= 400 or "error" in data:
+                result_var.set(f"Error: {data.get('error', 'Request failed.')}")
             else:
                 result_var.set("Product added successfully.")
                 barcode_var.set("")
@@ -109,7 +110,7 @@ def open_view_stock_window():
     tree.pack(fill="both", expand=True, padx=10, pady=10)
 
     try:
-        resp = requests.get(f"{SERVER_URL}/products", timeout=5)
+        resp = requests.get(f"{SERVER_URL}/products", headers=get_headers(), timeout=5)
         resp.raise_for_status()
         products = resp.json()
         for p in products:
@@ -149,7 +150,7 @@ def open_edit_products_window():
     tree.pack(fill="both", expand=True, padx=10, pady=10)
 
     try:
-        resp = requests.get(f"{SERVER_URL}/products", timeout=5)
+        resp = requests.get(f"{SERVER_URL}/products", headers=get_headers(), timeout=5)
         resp.raise_for_status()
         products = resp.json()
         for p in products:
@@ -237,16 +238,15 @@ def open_edit_products_window():
                 "description": desc,
                 "cost_price": cost,
                 "selling_price": sell,
-            }, timeout=5)
-            resp.raise_for_status()
+            }, headers=get_headers(), timeout=5)
             data = resp.json()
-            if "error" in data:
-                result_var.set(f"Error: {data['error']}")
+            if resp.status_code >= 400 or "error" in data:
+                result_var.set(f"Error: {data.get('error', 'Request failed.')}")
             else:
                 result_var.set("Product updated successfully.")
                 for row in tree.get_children():
                     tree.delete(row)
-                refreshed = requests.get(f"{SERVER_URL}/products", timeout=5).json()
+                refreshed = requests.get(f"{SERVER_URL}/products", headers=get_headers(), timeout=5).json()
                 for p in refreshed:
                     tree.insert("", "end", values=(
                         p.get("product_id", ""),
@@ -267,6 +267,7 @@ def open_edit_products_window():
         pwd = simpledialog.askstring("Admin password", "Enter admin password to confirm deletion:", show="*", parent=win)
         if pwd is None:
             return
+
         try:
             resp = requests.post(f"{SERVER_URL}/login", json={"username": "admin", "password": pwd}, timeout=5)
             if resp.status_code != 200 or resp.json().get("role") != "admin":
@@ -275,22 +276,22 @@ def open_edit_products_window():
         except requests.exceptions.RequestException:
             result_var.set("Could not reach server to verify password.")
             return
+
         try:
             pid = int(pid_text)
         except Exception:
             result_var.set("Invalid product ID.")
             return
         try:
-            resp = requests.delete(f"{SERVER_URL}/product/{pid}", timeout=5)
-            resp.raise_for_status()
+            resp = requests.delete(f"{SERVER_URL}/product/{pid}", headers=get_headers(), timeout=5)
             data = resp.json()
-            if "error" in data:
-                result_var.set(f"Error: {data['error']}")
+            if resp.status_code >= 400 or "error" in data:
+                result_var.set(f"Error: {data.get('error', 'Request failed.')}")
             else:
                 result_var.set("Product deleted successfully.")
                 for row in tree.get_children():
                     tree.delete(row)
-                refreshed = requests.get(f"{SERVER_URL}/products", timeout=5).json()
+                refreshed = requests.get(f"{SERVER_URL}/products", headers=get_headers(), timeout=5).json()
                 for p in refreshed:
                     tree.insert("", "end", values=(
                         p.get("product_id", ""),

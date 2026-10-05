@@ -6,6 +6,7 @@ from tkinter import ttk
 import requests
 
 from config import SERVER_URL
+from auth_state import get_headers
 
 
 def open_receive_stock_window():
@@ -55,51 +56,19 @@ def open_receive_stock_window():
     form.pack(fill="x", padx=10, pady=5)
 
     tk.Label(form, text="Selected product:").grid(
-        row=0,
-        column=0,
-        sticky="w",
-        padx=5,
-        pady=5,
+        row=0, column=0, sticky="w", padx=5, pady=5,
     )
     tk.Label(
-        form,
-        textvariable=selected_product_var,
-        width=45,
-        anchor="w",
-    ).grid(
-        row=0,
-        column=1,
-        columnspan=3,
-        sticky="w",
-        padx=5,
-        pady=5,
-    )
+        form, textvariable=selected_product_var, width=45, anchor="w",
+    ).grid(row=0, column=1, columnspan=3, sticky="w", padx=5, pady=5)
 
     tk.Label(form, text="Quantity received:").grid(
-        row=1,
-        column=0,
-        sticky="w",
-        padx=5,
-        pady=5,
+        row=1, column=0, sticky="w", padx=5, pady=5,
     )
-    quantity_entry = tk.Entry(
-        form,
-        textvariable=quantity_var,
-        width=12,
-    )
-    quantity_entry.grid(
-        row=1,
-        column=1,
-        sticky="w",
-        padx=5,
-        pady=5,
-    )
+    quantity_entry = tk.Entry(form, textvariable=quantity_var, width=12)
+    quantity_entry.grid(row=1, column=1, sticky="w", padx=5, pady=5)
 
-    tk.Label(
-        win,
-        textvariable=result_var,
-        fg="red",
-    ).pack(pady=5)
+    tk.Label(win, textvariable=result_var, fg="red").pack(pady=5)
 
     def load_products():
         """Reload the product list from the server."""
@@ -107,17 +76,13 @@ def open_receive_stock_window():
             tree.delete(row)
 
         try:
-            response = requests.get(
-                f"{SERVER_URL}/products",
-                timeout=5,
-            )
+            response = requests.get(f"{SERVER_URL}/products", headers=get_headers(), timeout=5)
             response.raise_for_status()
             products = response.json()
 
             for product in products:
                 tree.insert(
-                    "",
-                    "end",
+                    "", "end",
                     values=(
                         product.get("product_id", ""),
                         product.get("barcode", ""),
@@ -132,12 +97,10 @@ def open_receive_stock_window():
 
     def on_select(event):
         selection = tree.selection()
-
         if not selection:
             return
 
         values = tree.item(selection[0])["values"]
-
         product_id = values[0]
         barcode = values[1]
         description = values[2]
@@ -173,13 +136,13 @@ def open_receive_stock_window():
             response = requests.post(
                 f"{SERVER_URL}/product/{product_id}/receive-stock",
                 json={"quantity_received": quantity},
+                headers=get_headers(),
                 timeout=5,
             )
-            response.raise_for_status()
             data = response.json()
 
-            if "error" in data:
-                result_var.set(f"Error: {data['error']}")
+            if response.status_code >= 400 or "error" in data:
+                result_var.set(f"Error: {data.get('error', 'Request failed.')}")
                 return
 
             updated = data["product"]
@@ -198,31 +161,13 @@ def open_receive_stock_window():
     tree.bind("<<TreeviewSelect>>", on_select)
 
     tk.Button(
-        form,
-        text="Receive stock",
-        command=receive_selected_stock,
-        width=18,
-        height=2,
-        font=("Arial", 11),
-    ).grid(
-        row=1,
-        column=2,
-        padx=15,
-        pady=5,
-    )
+        form, text="Receive stock", command=receive_selected_stock,
+        width=18, height=2, font=("Arial", 11),
+    ).grid(row=1, column=2, padx=15, pady=5)
 
     tk.Button(
-        form,
-        text="Refresh list",
-        command=load_products,
-        width=14,
-        height=2,
-        font=("Arial", 11),
-    ).grid(
-        row=1,
-        column=3,
-        padx=5,
-        pady=5,
-    )
+        form, text="Refresh list", command=load_products,
+        width=14, height=2, font=("Arial", 11),
+    ).grid(row=1, column=3, padx=5, pady=5)
 
     load_products()
