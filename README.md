@@ -18,13 +18,13 @@ A full-stack Point of Sale (POS) system built with Python. It combines a **Tkint
 
 ## Features
 
-- **Role-based login** — admin and cashier accounts see different screens. Cashiers are routed straight to the checkout window; admins get full management access.
+- **Role-based login with server-side enforcement** — every API route requires a signed authentication token issued at login, and admin-only actions (editing products, viewing sales, the dashboard) are rejected with a 403 if a cashier's token is used. Cashiers are routed straight to the checkout window; admins get full management access.
 - **Cashier checkout** — product search, editable cart, cash/card payment, automatic change calculation, and a printable-style receipt popup.
 - **Product management** — add, view, edit, and delete products (barcode, description, cost price, selling price, stock quantity).
 - **Stock receiving** — add received stock to existing products and see live quantity updates.
 - **Sales history** — browse past sales with date-range filtering, view line-item detail per sale, and export filtered sales to CSV.
 - **Manager dashboard** — today's and this month's sales totals, profit against cost, fast-moving and slow-moving products (last 30 days), and a low-stock alert list.
-- **Secure authentication** — passwords are hashed server-side (`werkzeug.security`), never stored or compared in plaintext.
+- **Secure authentication** —  passwords are hashed server-side (`werkzeug.security`), never stored or compared in plaintext. Login issues a signed, time-limited token (`itsdangerous`) that must be presented on every subsequent request.
 - **Configurable server address** — the client's server URL is read from an environment variable with a sane default, instead of being hardcoded.
 
 ## Tech Stack
